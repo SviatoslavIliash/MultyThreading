@@ -7,19 +7,24 @@ import java.util.ArrayList;
  */
 public class MultThred extends Thread {
     Child child;
+
     public static class Child extends Thread{
+        int count = 0;
         @Override
         public void run(){
             Child child = new Child();
-            System.out.println("Child thread: " + child.getId());
-            try {
-                child.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            synchronized (child) {
+                System.out.println("Child thread: " + child.getId());
+                try {
+                    child.wait();
+                } catch (InterruptedException e) {
+                    //e.printStackTrace();
+                }
             }
+
         }
     }
-    public void run(){
+    /*public void run(){
         ArrayList<Child> threads = new ArrayList<Child>();
         for (int i = 0; i < 10; i++) {
             Child child = new Child();
@@ -36,8 +41,8 @@ public class MultThred extends Thread {
         }
         for(Child child: threads){
             child.interrupt();
-        }
-    }
+        }/
+    }*/
 
     public static void main(String[] args) {
         ArrayList<Child> threads = new ArrayList<Child>();
@@ -55,11 +60,17 @@ public class MultThred extends Thread {
             }
         }*/
         try {
-            Thread.sleep(10000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        //for(Child child: threads){
+          //  child.notify();
+        //}
         for(Child child: threads){
+            synchronized (child){
+                child.notify();
+            }
             child.interrupt();
         }
     }
